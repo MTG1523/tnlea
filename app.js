@@ -106,7 +106,29 @@ function init() {
         auth.onAuthStateChanged(user => {
             currentUser = user ? { name: user.displayName, email: user.email, uid: user.uid } : null;
             updateAuthUI();
-            applyFilters(); // re-render so public buttons update
+            
+            if (currentUser) {
+                // Fetch choices from Firestore
+                db.collection('user_choices').doc(currentUser.uid).get()
+                    .then(doc => {
+                        if (doc.exists && doc.data().choices) {
+                            myChoices = doc.data().choices;
+                            localStorage.setItem('tnlea_choices', JSON.stringify(myChoices));
+                        } else if (myChoices.length > 0) {
+                            // If Firestore has no choices but local does, sync them up
+                            saveChoices();
+                        }
+                        updateChoicesCount();
+                        renderChoices();
+                        applyFilters(); // re-render so public buttons update
+                    })
+                    .catch(err => {
+                        console.warn('Failed to fetch choices', err);
+                        applyFilters();
+                    });
+            } else {
+                applyFilters(); // re-render so public buttons update
+            }
         });
     } catch (e) {
         console.warn('Firebase Auth unavailable on file:// URL:', e.code);
@@ -582,6 +604,12 @@ window.removeChoice = function(index) {
 
 function saveChoices() {
     localStorage.setItem('tnlea_choices', JSON.stringify(myChoices));
+    if (currentUser) {
+        db.collection('user_choices').doc(currentUser.uid).set({
+            choices: myChoices,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }).catch(err => console.warn('Failed to sync choices to Firestore', err));
+    }
 }
 
 function updateChoicesCount() {
