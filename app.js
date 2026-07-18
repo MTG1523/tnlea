@@ -885,6 +885,9 @@ function handleLogin() {
 function handleLogout() {
     auth.signOut()
         .then(() => {
+            localStorage.removeItem('tnlea_guest');
+            localStorage.removeItem('tnlea_choices');
+            localStorage.removeItem('tnlea_compare');
             showToast('Signed out', 'info');
             setTimeout(() => { window.location.href = 'login.html'; }, 1000);
         })

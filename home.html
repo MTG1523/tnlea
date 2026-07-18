@@ -895,6 +895,8 @@
     document.getElementById('logout-btn')?.addEventListener('click', () => {
         auth.signOut().then(() => {
             localStorage.removeItem('tnlea_guest');
+            localStorage.removeItem('tnlea_choices');
+            localStorage.removeItem('tnlea_compare');
             window.location.href = 'login.html';
         });
     });
