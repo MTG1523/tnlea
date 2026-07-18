@@ -34,8 +34,8 @@ service cloud.firestore {
       // Only signed-in users can delete entries
       allow delete: if request.auth != null;
 
-      // Prevent updates
-      allow update: if false;
+      // Allow updates
+      allow update: if true;
     }
 
     // ── user_choices collection ──────────────────────────────────────────

@@ -162,15 +162,12 @@ function init() {
                 const firestoreChoices = [];
                 snapshot.forEach(doc => firestoreChoices.push({ id: doc.id, ...doc.data() }));
                 
-                // Reorder according to the saved local order
-                const localOrderMap = {};
-                local.forEach((item, index) => {
-                    localOrderMap[item.code + '_' + item.branchCode] = index;
-                });
+                // Get pending local additions (not yet synced to Firestore)
+                let pending = publicChoices.filter(c => c.id && c.id.startsWith('local_'));
                 
-                let merged = [...firestoreChoices, ...publicChoices.filter(l => l.id && l.id.startsWith('local_'))];
+                let merged = [...firestoreChoices, ...pending];
                 
-                // Remove exact duplicates that might occur if local_ item was just synced
+                // Remove duplicates if the item just synced
                 const uniqueMerged = [];
                 const seenCodes = new Set();
                 merged.forEach(item => {
@@ -181,16 +178,14 @@ function init() {
                     }
                 });
 
+                // Global sort: orderIndex ascending, fallback to createdAt descending
                 uniqueMerged.sort((a, b) => {
-                    const idxA = localOrderMap[a.code + '_' + a.branchCode];
-                    const idxB = localOrderMap[b.code + '_' + b.branchCode];
+                    const idxA = typeof a.orderIndex === 'number' ? a.orderIndex : Infinity;
+                    const idxB = typeof b.orderIndex === 'number' ? b.orderIndex : Infinity;
                     
-                    if (idxA !== undefined && idxB !== undefined) return idxA - idxB;
-                    // If a is new (not in local map), put it at the top
-                    if (idxA === undefined && idxB !== undefined) return -1;
-                    if (idxB === undefined && idxA !== undefined) return 1;
+                    if (idxA !== idxB) return idxA - idxB;
                     
-                    // Fallback to createdAt
+                    // Fallback for older items without orderIndex
                     const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
                     const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
                     return timeB - timeA;
@@ -466,7 +461,8 @@ window.toggleChoice = async function(code, branchCode, isPublic) {
                 addedBy: currentUser?.name || 'Anonymous',
                 addedByUid: currentUser?.uid || null,
                 createdAt: new Date().toISOString(),
-                id: 'local_' + Date.now()
+                id: 'local_' + Date.now(),
+                orderIndex: publicChoices.length // Append at the end globally
             };
             
             // Add locally instantly
@@ -709,6 +705,24 @@ function handlePublicDragOver(e, index) {
     }
 }
 
+function syncPublicOrderToFirestore() {
+    const batch = db.batch();
+    let hasUpdates = false;
+    
+    publicChoices.forEach((choice, index) => {
+        if (choice.id && !choice.id.startsWith('local_') && choice.orderIndex !== index) {
+            const docRef = db.collection('public_choices').doc(choice.id);
+            batch.update(docRef, { orderIndex: index });
+            choice.orderIndex = index;
+            hasUpdates = true;
+        }
+    });
+    
+    if (hasUpdates) {
+        batch.commit().catch(err => console.warn('Failed to sync global public order to Firestore', err));
+    }
+}
+
 function handlePublicDrop(e, targetIndex) {
     e.preventDefault();
     e.currentTarget.classList.remove('drag-over');
@@ -720,6 +734,7 @@ function handlePublicDrop(e, targetIndex) {
 
     localStorage.setItem('tnlea_public', JSON.stringify(publicChoices));
     renderPublicChoices();
+    syncPublicOrderToFirestore();
     showToast('Public list order updated ↕', 'success');
 }
 
@@ -730,6 +745,7 @@ window.movePublicChoice = function(index, dir) {
     
     localStorage.setItem('tnlea_public', JSON.stringify(publicChoices));
     renderPublicChoices();
+    syncPublicOrderToFirestore();
 };
 
 window.removePublicChoice = async function(docId, code, branchCode) {
