@@ -160,7 +160,7 @@ function init() {
             .onSnapshot(snapshot => {
                 firestoreLoaded = true;
                 const firestoreChoices = [];
-                snapshot.forEach(doc => firestoreChoices.push({ id: doc.id, ...doc.data() }));
+                snapshot.forEach(doc => firestoreChoices.push({ ...doc.data(), id: doc.id }));
                 
                 // Get pending local additions (not yet synced to Firestore)
                 let pending = publicChoices.filter(c => c.id && c.id.startsWith('local_'));
@@ -186,8 +186,14 @@ function init() {
                     if (idxA !== idxB) return idxA - idxB;
                     
                     // Fallback for older items without orderIndex
-                    const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-                    const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+                    const getMs = (val) => {
+                        if (!val) return 0;
+                        if (typeof val === 'string') return new Date(val).getTime();
+                        if (val.toMillis) return val.toMillis();
+                        return 0;
+                    };
+                    const timeA = getMs(a.createdAt);
+                    const timeB = getMs(b.createdAt);
                     return timeB - timeA;
                 });
                 
@@ -471,8 +477,11 @@ window.toggleChoice = async function(code, branchCode, isPublic) {
             showToast('Added to Public List 🌍', 'success');
             
             // Fire and forget server add — updates the local entry's id when done
+            const serverEntry = { ...entry };
+            delete serverEntry.id;
+            
             db.collection('public_choices').add({
-                ...entry,
+                ...serverEntry,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             }).then(docRef => {
                 // Update the local entry with the real Firestore id
