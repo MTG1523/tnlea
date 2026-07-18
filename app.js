@@ -111,13 +111,23 @@ function init() {
                 // Fetch choices from Firestore
                 db.collection('user_choices').doc(currentUser.uid).get()
                     .then(doc => {
-                        if (doc.exists && doc.data().choices) {
+                        let guestChoices = [];
+                        try { guestChoices = JSON.parse(localStorage.getItem('tnlea_choices')) || []; } catch(e) {}
+
+                        if (doc.exists && doc.data().choices && doc.data().choices.length > 0) {
                             myChoices = doc.data().choices;
-                            localStorage.setItem('tnlea_choices', JSON.stringify(myChoices));
-                        } else if (myChoices.length > 0) {
-                            // If Firestore has no choices but local does, sync them up
+                            localStorage.setItem(`tnlea_choices_${currentUser.uid}`, JSON.stringify(myChoices));
+                            localStorage.removeItem('tnlea_choices'); // clear any guest data to prevent leaks
+                        } else if (guestChoices.length > 0) {
+                            // If Firestore is empty but they had guest choices, migrate them
+                            myChoices = guestChoices;
                             saveChoices();
+                            localStorage.removeItem('tnlea_choices'); // migrated
+                        } else {
+                            // Try loading from their specific local storage cache
+                            try { myChoices = JSON.parse(localStorage.getItem(`tnlea_choices_${currentUser.uid}`)) || []; } catch(e) {}
                         }
+                        
                         updateChoicesCount();
                         renderChoices();
                         applyFilters(); // re-render so public buttons update
@@ -603,12 +613,14 @@ window.removeChoice = function(index) {
 };
 
 function saveChoices() {
-    localStorage.setItem('tnlea_choices', JSON.stringify(myChoices));
     if (currentUser) {
+        localStorage.setItem(`tnlea_choices_${currentUser.uid}`, JSON.stringify(myChoices));
         db.collection('user_choices').doc(currentUser.uid).set({
             choices: myChoices,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         }).catch(err => console.warn('Failed to sync choices to Firestore', err));
+    } else {
+        localStorage.setItem('tnlea_choices', JSON.stringify(myChoices));
     }
 }
 
