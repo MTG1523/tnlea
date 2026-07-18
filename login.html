@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — TNLEA Assistant</title>
+    <meta name="description" content="Sign in to TNLEA Assistant — Tamil Nadu Lateral Entry Counselling">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            background: #04060f;
+            color: #e8eeff;
+            overflow: hidden;
+        }
+
+        /* ── Animated Background ────────────────────────────────── */
+        .bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: orbFloat linear infinite;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        .orb-1 {
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(99,102,241,0.5) 0%, transparent 70%);
+            top: -150px; left: -100px;
+            animation-duration: 20s;
+            animation-delay: 0.3s;
+        }
+        .orb-2 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(139,92,246,0.4) 0%, transparent 70%);
+            bottom: -100px; right: -80px;
+            animation-duration: 25s;
+            animation-delay: 0.5s;
+        }
+        .orb-3 {
+            width: 350px; height: 350px;
+            background: radial-gradient(circle, rgba(16,185,129,0.25) 0%, transparent 70%);
+            top: 40%; right: 20%;
+            animation-duration: 18s;
+            animation-delay: 0.8s;
+        }
+        .orb-4 {
+            width: 280px; height: 280px;
+            background: radial-gradient(circle, rgba(236,72,153,0.2) 0%, transparent 70%);
+            bottom: 25%; left: 15%;
+            animation-duration: 22s;
+            animation-delay: 0.6s;
+        }
+
+        @keyframes orbFloat {
+            0% { opacity: 0; transform: translate(0,0) scale(1); }
+            10% { opacity: 1; }
+            33% { transform: translate(40px, -30px) scale(1.08); }
+            66% { transform: translate(-25px, 35px) scale(0.94); }
+            100% { transform: translate(0,0) scale(1); opacity: 1; }
+        }
+
+        /* Grid overlay */
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: rgba(165, 180, 252, 0.6);
+            animation: particleDrift linear infinite;
+        }
+
+        @keyframes particleDrift {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-20px) translateX(var(--drift)); opacity: 0; }
+        }
+
+        /* ── Main Layout ────────────────────────────────────────── */
+        .page {
+            position: relative;
+            z-index: 1;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        /* Left — Branding Panel */
+        .brand-panel {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-inner {
+            max-width: 480px;
+            animation: slideInLeft 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+        }
+
+        .brand-logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 8px 24px rgba(99,102,241,0.5);
+            animation: logoBounce 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s both;
+        }
+
+        @keyframes logoBounce {
+            from { opacity: 0; transform: scale(0.3) rotate(-15deg); }
+            to { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        .brand-logo-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a5b4fc, #c4b5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-tagline {
+            font-size: clamp(2.2rem, 3.5vw, 3.2rem);
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -0.04em;
+            margin-bottom: 1.5rem;
+        }
+
+        .brand-tagline .grad {
+            background: linear-gradient(135deg, #a5b4fc 0%, #c4b5fd 50%, #6ee7b7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-desc {
+            font-size: 1.05rem;
+            color: rgba(136, 146, 164, 0.9);
+            line-height: 1.7;
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+        }
+
+        /* Feature list */
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            animation: featureIn 0.5s ease both;
+        }
+
+        .feature-item:nth-child(1) { animation-delay: 0.7s; }
+        .feature-item:nth-child(2) { animation-delay: 0.85s; }
+        .feature-item:nth-child(3) { animation-delay: 1.0s; }
+        .feature-item:nth-child(4) { animation-delay: 1.15s; }
+
+        @keyframes featureIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .feature-icon-wrap {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .feature-icon-wrap.indigo { background: rgba(99,102,241,0.15); color: #818cf8; }
+        .feature-icon-wrap.green  { background: rgba(16,185,129,0.15);  color: #34d399; }
+        .feature-icon-wrap.teal   { background: rgba(20,184,166,0.15);  color: #2dd4bf; }
+        .feature-icon-wrap.purple { background: rgba(139,92,246,0.15);  color: #a78bfa; }
+
+        .feature-text { font-size: 0.9rem; color: #94a3b8; font-weight: 500; }
+        .feature-text strong { color: #c8d3ea; }
+
+        /* ── Right — Login Panel ─────────────────────────────────── */
+        .login-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 28px;
+            padding: 2.5rem;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            animation: cardUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+            box-shadow:
+                0 0 0 1px rgba(99, 102, 241, 0.1),
+                0 20px 60px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
+
+        @keyframes cardUp {
+            from { opacity: 0; transform: translateY(50px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .card-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 1.25rem;
+            box-shadow: 0 8px 32px rgba(99,102,241,0.5);
+            animation: iconPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s both;
+        }
+
+        @keyframes iconPop {
+            from { opacity: 0; transform: scale(0); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 0.4rem;
+        }
+
+        .card-sub {
+            font-size: 0.875rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        /* Cycling text */
+        .cycling-text-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.5rem;
+            height: 22px;
+            overflow: hidden;
+        }
+
+        .cycling-text {
+            color: #818cf8;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* Divider */
+        .card-divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .card-divider-line {
+            flex: 1;
+            height: 1px;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .card-divider-text {
+            font-size: 0.75rem;
+            color: #475569;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        /* Buttons */
+        .btn-google {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.875rem;
+            padding: 0.875rem 1.5rem;
+            background: #ffffff;
+            color: #1e293b;
+            border: none;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-google::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(99,102,241,0.08) 50%, transparent 100%);
+            background-size: 200% 100%;
+            animation: shimmer 2s ease infinite;
+        }
+
+        @keyframes shimmer {
+            from { background-position: -200% center; }
+            to { background-position: 200% center; }
+        }
+
+        .btn-google:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+        }
+
+        .btn-google:active { transform: translateY(0); }
+
+        .btn-google img {
+            width: 22px;
+            height: 22px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1.5rem;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: 'Inter', sans-serif;
+            box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+            margin-top: 0.75rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(99,102,241,0.55);
+        }
+
+        .btn-guest {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: transparent;
+            color: #64748b;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+            margin-top: 0.75rem;
+            text-decoration: none;
+        }
+
+        .btn-guest:hover { color: #94a3b8; border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.03); }
+
+        /* Status message */
+        .status-msg {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 1.25rem;
+            padding: 0.625rem 1rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.06);
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .status-msg.loading { color: #818cf8; }
+        .status-msg.error   { color: #f87171; border-color: rgba(248,113,113,0.2); background: rgba(248,113,113,0.05); }
+        .status-msg.success { color: #34d399; border-color: rgba(52,211,153,0.2); background: rgba(52,211,153,0.05); }
+
+        .spinner {
+            width: 14px; height: 14px;
+            border: 2px solid rgba(129,140,248,0.3);
+            border-top-color: #818cf8;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Terms */
+        .terms {
+            text-align: center;
+            font-size: 0.72rem;
+            color: #334155;
+            margin-top: 1.25rem;
+            line-height: 1.5;
+        }
+
+        /* File URL notice */
+        .file-notice {
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            font-size: 0.78rem;
+            color: #fbbf24;
+            margin-bottom: 1.25rem;
+            display: none;
+            align-items: flex-start;
+            gap: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .file-notice.show { display: flex; }
+        .file-notice i { flex-shrink: 0; margin-top: 1px; }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .page { grid-template-columns: 1fr; }
+            .brand-panel { display: none; }
+            .login-panel { padding: 2rem 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Animated Background -->
+<div class="bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+</div>
+<div class="bg-grid"></div>
+<div class="particles" id="particles"></div>
+
+<!-- Page Layout -->
+<div class="page">
+
+    <!-- Left: Brand Panel -->
+    <div class="brand-panel">
+        <div class="brand-inner">
+            <div class="brand-logo">
+                <div class="brand-logo-icon">
+                    <i class="ri-graduation-cap-fill" style="color:white;"></i>
+                </div>
+                <span class="brand-logo-name">TNLEA Assistant</span>
+            </div>
+
+            <h1 class="brand-tagline">
+                Your smarter path to<br>
+                <span class="grad">Engineering Admission</span>
+            </h1>
+
+            <p class="brand-desc">
+                The most powerful TNEA lateral entry counselling tool — built specifically for Tamil Nadu diploma holders.
+            </p>
+
+            <div class="feature-list">
+                <div class="feature-item">
+                    <div class="feature-icon-wrap indigo"><i class="ri-search-2-line"></i></div>
+                    <span class="feature-text"><strong>Browse</strong> 3,300+ college-branch entries</span>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon-wrap green"><i class="ri-award-line"></i></div>
+                    <span class="feature-text"><strong>Enter your rank</strong> — see eligibility instantly</span>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon-wrap teal"><i class="ri-bar-chart-grouped-line"></i></div>
+                    <span class="feature-text"><strong>Compare</strong> colleges side-by-side</span>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon-wrap purple"><i class="ri-global-line"></i></div>
+                    <span class="feature-text"><strong>Share</strong> your list with friends</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Login Card -->
+    <div class="login-panel">
+        <div class="login-card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="ri-graduation-cap-fill" style="color:white;"></i>
+                </div>
+                <div class="card-title">Welcome to TNLEA</div>
+                <div class="card-sub">
+                    Sign in to save your choices across devices
+                    <div class="cycling-text-wrap">
+                        <i class="ri-sparkling-2-line" style="color:#818cf8;font-size:0.85rem;"></i>
+                        <span class="cycling-text" id="cycling-text">Browse 414 colleges</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- File URL warning -->
+            <div class="file-notice" id="file-notice">
+                <i class="ri-alert-line"></i>
+                <span>Google Sign-In requires a web server. Use VS Code <strong>Live Server</strong> extension for full auth. You can still <strong>Continue as Guest</strong> without it.</span>
+            </div>
+
+            <!-- Google Sign-In -->
+            <button class="btn-google" id="google-btn" onclick="handleGoogleLogin()">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21.805 11.228c0-.742-.066-1.457-.189-2.144H11.22v4.057h5.938c-.255 1.38-1.036 2.55-2.206 3.333v2.77h3.573c2.09-1.924 3.28-4.758 3.28-8.016z" fill="#4285F4"/>
+                    <path d="M11.22 22c2.975 0 5.47-.987 7.294-2.676l-3.573-2.77c-.988.66-2.252 1.05-3.72 1.05-2.862 0-5.286-1.934-6.153-4.532H1.358v2.862C3.172 19.497 6.96 22 11.22 22z" fill="#34A853"/>
+                    <path d="M5.067 13.072A6.617 6.617 0 0 1 4.71 11c0-.72.124-1.42.357-2.072V6.066H1.358A10.995 10.995 0 0 0 .22 11c0 1.782.426 3.467 1.138 4.934l3.709-2.862z" fill="#FBBC05"/>
+                    <path d="M11.22 4.396c1.613 0 3.06.554 4.198 1.644l3.15-3.15C16.685 1.043 14.19 0 11.22 0 6.96 0 3.172 2.503 1.358 6.066l3.709 2.862c.867-2.598 3.291-4.532 6.153-4.532z" fill="#EA4335"/>
+                </svg>
+                Continue with Google
+            </button>
+
+            <div class="card-divider">
+                <div class="card-divider-line"></div>
+                <span class="card-divider-text">or</span>
+                <div class="card-divider-line"></div>
+            </div>
+
+            <!-- Guest -->
+            <a class="btn-guest" id="guest-btn" onclick="continueAsGuest()">
+                <i class="ri-user-line"></i>
+                Continue as Guest
+            </a>
+
+            <!-- Status -->
+            <div class="status-msg" id="status-msg">
+                <i class="ri-shield-check-line"></i>
+                <span id="status-text">Sign in to sync your choices across devices</span>
+            </div>
+
+            <div class="terms">
+                By continuing, you agree to use this tool for educational purposes.
+                No data is sold or shared with third parties.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCqcnfGLPtQhVBFm7zhSiY0pUre_LSPxlY",
+        authDomain: "tnlea-a3ea2.firebaseapp.com",
+        projectId: "tnlea-a3ea2",
+        storageBucket: "tnlea-a3ea2.firebasestorage.app",
+        messagingSenderId: "185173026809",
+        appId: "1:185173026809:web:b5e2af654615885cdaff28"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    // Check if file:// URL
+    const isFileUrl = window.location.protocol === 'file:';
+    if (isFileUrl) {
+        document.getElementById('file-notice').classList.add('show');
+    }
+
+    // Check existing auth state
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            setStatus('success', `Welcome back, ${user.displayName || 'User'}! Redirecting…`);
+            setTimeout(() => {
+                window.location.href = 'home.html';
+            }, 800);
+        }
+    });
+
+    // Allow guests to view the login page so they can sign in later.
+
+    function setStatus(type, msg, loading = false) {
+        const box = document.getElementById('status-msg');
+        const txt = document.getElementById('status-text');
+        box.className = 'status-msg ' + type;
+        txt.textContent = msg;
+
+        const spinner = box.querySelector('.spinner');
+        if (spinner) spinner.remove();
+        if (loading) {
+            const s = document.createElement('div');
+            s.className = 'spinner';
+            box.prepend(s);
+        }
+    }
+
+    async function handleGoogleLogin() {
+        if (isFileUrl) {
+            setStatus('error', 'Google Sign-In blocked on file:// URLs. Use Live Server or continue as Guest.');
+            return;
+        }
+        setStatus('loading', 'Opening Google Sign-In…', true);
+        try {
+            const result = await auth.signInWithPopup(provider);
+            setStatus('success', `Signed in as ${result.user.displayName}! Redirecting…`);
+            localStorage.removeItem('tnlea_guest');
+            setTimeout(() => { window.location.href = 'home.html'; }, 800);
+        } catch (err) {
+            if (err.code === 'auth/unauthorized-domain') {
+                setStatus('error', 'Domain not authorized. Add localhost to Firebase Console authorized domains.');
+            } else if (err.code === 'auth/popup-blocked') {
+                setStatus('error', 'Popup was blocked. Please allow popups for this site.');
+            } else {
+                setStatus('error', err.message || 'Sign-in failed. Try again.');
+            }
+        }
+    }
+
+    function continueAsGuest() {
+        localStorage.setItem('tnlea_guest', 'true');
+        setStatus('success', 'Continuing as guest. Your choices will be saved locally.');
+        setTimeout(() => { window.location.href = 'home.html'; }, 600);
+    }
+
+    // ── Cycling text ────────────────────────────────────────────────────────
+    const features = [
+        'Browse 414 colleges',
+        'Filter by your diploma %',
+        'Compare side-by-side',
+        'Build your choice list',
+        'Export to CSV',
+        'Share with friends',
+    ];
+    let featureIdx = 0;
+    const cyclingEl = document.getElementById('cycling-text');
+
+    setInterval(() => {
+        featureIdx = (featureIdx + 1) % features.length;
+        cyclingEl.style.opacity = '0';
+        cyclingEl.style.transform = 'translateY(-8px)';
+        setTimeout(() => {
+            cyclingEl.textContent = features[featureIdx];
+            cyclingEl.style.opacity = '1';
+            cyclingEl.style.transform = 'translateY(0)';
+        }, 300);
+    }, 2500);
+
+    // ── Particles ────────────────────────────────────────────────────────────
+    const particlesContainer = document.getElementById('particles');
+    const COUNT = 25;
+
+    for (let i = 0; i < COUNT; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 3 + 1;
+        p.style.cssText = `
+            left: ${Math.random() * 100}%;
+            bottom: -10px;
+            width: ${size}px;
+            height: ${size}px;
+            --drift: ${(Math.random() - 0.5) * 60}px;
+            animation-duration: ${Math.random() * 12 + 10}s;
+            animation-delay: ${Math.random() * 10}s;
+            opacity: ${Math.random() * 0.6 + 0.2};
+        `;
+        particlesContainer.appendChild(p);
+    }
+</script>
+</body>
+</html>

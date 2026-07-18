@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home — TNLEA Assistant</title>
+    <meta name="description" content="TNLEA Assistant Dashboard — Your Tamil Nadu Lateral Entry Counselling Hub">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #070c1a;
+            color: #e8eeff;
+            min-height: 100vh;
+        }
+
+        /* ── Background ──────────────────────────────────────────── */
+        .bg-fixed {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse 70% 50% at 15% 10%, rgba(99,102,241,0.18) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 85% 85%, rgba(139,92,246,0.12) 0%, transparent 60%),
+                #070c1a;
+        }
+
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* ── Top Nav ─────────────────────────────────────────────── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(7, 12, 26, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 0 2rem;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-logo-wrap {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.4);
+        }
+
+        .nav-logo-text {
+            font-size: 1rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a5b4fc, #c4b5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-app-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.1rem;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 3px 12px rgba(99,102,241,0.35);
+        }
+
+        .nav-app-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(99,102,241,0.5); }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 999px;
+            padding: 0.35rem 0.875rem 0.35rem 0.4rem;
+        }
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .user-name {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #c8d3ea;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .btn-icon-nav {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            color: #8892a4;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-icon-nav:hover { color: white; background: rgba(255,255,255,0.1); }
+
+        /* ── Main ───────────────────────────────────────────────── */
+        main {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem 4rem;
+        }
+
+        /* ── Hero Section ────────────────────────────────────────── */
+        .hero {
+            margin-bottom: 3rem;
+            animation: fadeUp 0.6s ease 0.1s both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-inner {
+            background: linear-gradient(135deg,
+                rgba(99,102,241,0.15) 0%,
+                rgba(139,92,246,0.1) 50%,
+                rgba(16,185,129,0.08) 100%);
+            border: 1px solid rgba(99,102,241,0.2);
+            border-radius: 24px;
+            padding: 2.5rem 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-inner::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(165,180,252,0.4), rgba(196,181,253,0.4), transparent);
+        }
+
+        .hero-text .greeting {
+            font-size: 0.85rem;
+            color: #a5b4fc;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .hero-text h1 {
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            line-height: 1.2;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero-text h1 span {
+            background: linear-gradient(135deg, #a5b4fc, #c4b5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-text p {
+            color: #8892a4;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .hero-badge-group {
+            display: flex;
+            gap: 0.6rem;
+            margin-top: 1.25rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-stat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.875rem;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .hsb-choices { background: rgba(99,102,241,0.15); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.2); }
+        .hsb-compare { background: rgba(20,184,166,0.15); color: #2dd4bf; border: 1px solid rgba(20,184,166,0.2); }
+        .hsb-date    { background: rgba(255,255,255,0.05); color: #64748b; border: 1px solid rgba(255,255,255,0.08); }
+
+        .hero-visual {
+            flex-shrink: 0;
+        }
+
+        .hero-icon-big {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            box-shadow: 0 12px 40px rgba(99,102,241,0.5);
+            animation: iconFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+
+        /* ── Section Title ────────────────────────────────────────── */
+        .section-heading {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #8892a4;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.75rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-heading::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255,255,255,0.06);
+        }
+
+        /* ── Action Cards Grid ────────────────────────────────────── */
+        .action-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+            animation: fadeUp 0.6s ease 0.2s both;
+        }
+
+        .action-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 20px;
+            padding: 1.75rem 2rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .action-card.card-browse::before  { background: linear-gradient(135deg, rgba(99,102,241,0.1), transparent); }
+        .action-card.card-choices::before { background: linear-gradient(135deg, rgba(139,92,246,0.1), transparent); }
+        .action-card.card-compare::before { background: linear-gradient(135deg, rgba(20,184,166,0.1), transparent); }
+        .action-card.card-public::before  { background: linear-gradient(135deg, rgba(16,185,129,0.1), transparent); }
+
+        .action-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.14); }
+        .action-card:hover::before { opacity: 1; }
+        .action-card.card-browse:hover  { box-shadow: 0 12px 40px rgba(99,102,241,0.2); border-color: rgba(99,102,241,0.3); }
+        .action-card.card-choices:hover { box-shadow: 0 12px 40px rgba(139,92,246,0.2); border-color: rgba(139,92,246,0.3); }
+        .action-card.card-compare:hover { box-shadow: 0 12px 40px rgba(20,184,166,0.2); border-color: rgba(20,184,166,0.3); }
+        .action-card.card-public:hover  { box-shadow: 0 12px 40px rgba(16,185,129,0.2); border-color: rgba(16,185,129,0.3); }
+
+        .ac-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .action-card:hover .ac-icon { transform: scale(1.1) rotate(-3deg); }
+
+        .ac-icon.indigo { background: rgba(99,102,241,0.15); color: #818cf8; }
+        .ac-icon.purple { background: rgba(139,92,246,0.15); color: #a78bfa; }
+        .ac-icon.teal   { background: rgba(20,184,166,0.15);  color: #2dd4bf; }
+        .ac-icon.green  { background: rgba(16,185,129,0.15);  color: #34d399; }
+
+        .ac-content { flex: 1; min-width: 0; }
+
+        .ac-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 0.3rem;
+            letter-spacing: -0.02em;
+        }
+
+        .ac-desc { font-size: 0.82rem; color: #64748b; line-height: 1.5; }
+
+        .ac-count {
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            margin-top: 0.5rem;
+        }
+
+        .ac-count.indigo { color: #818cf8; }
+        .ac-count.purple { color: #a78bfa; }
+        .ac-count.teal   { color: #2dd4bf; }
+        .ac-count.green  { color: #34d399; }
+
+        .ac-arrow {
+            color: rgba(255,255,255,0.2);
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .action-card:hover .ac-arrow { color: rgba(255,255,255,0.6); transform: translateX(4px); }
+
+        /* ── Two Column Layout ────────────────────────────────────── */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            animation: fadeUp 0.6s ease 0.3s both;
+        }
+
+        /* ── Recent Choices ────────────────────────────────────────── */
+        .panel {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-header h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .panel-header h3 i { color: #818cf8; }
+
+        .panel-link {
+            font-size: 0.78rem;
+            color: #818cf8;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: color 0.2s ease;
+        }
+
+        .panel-link:hover { color: #a5b4fc; }
+
+        .choice-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: background 0.2s ease;
+        }
+
+        .choice-item:last-child { border-bottom: none; }
+        .choice-item:hover { background: rgba(255,255,255,0.02); }
+
+        .choice-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 800;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(99,102,241,0.3);
+        }
+
+        .choice-info { flex: 1; min-width: 0; }
+
+        .choice-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .choice-branch { font-size: 0.75rem; color: #475569; margin-top: 0.15rem; }
+
+        .choice-badge {
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .cb-govt  { background: rgba(16,185,129,0.12); color: #34d399; }
+        .cb-aided { background: rgba(59,130,246,0.12); color: #60a5fa; }
+        .cb-sf    { background: rgba(245,158,11,0.12); color: #fbbf24; }
+        .cb-deemed{ background: rgba(139,92,246,0.12); color: #a78bfa; }
+
+        .empty-panel {
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            color: #334155;
+        }
+
+        .empty-panel i { font-size: 2rem; display: block; margin-bottom: 0.75rem; color: #1e293b; }
+        .empty-panel p { font-size: 0.85rem; margin-bottom: 1rem; }
+
+        .empty-panel .start-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1.1rem;
+            background: rgba(99,102,241,0.15);
+            color: #818cf8;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 700;
+            border: 1px solid rgba(99,102,241,0.2);
+            transition: all 0.2s ease;
+        }
+
+        .empty-panel .start-btn:hover { background: rgba(99,102,241,0.25); color: #a5b4fc; }
+
+        /* ── Tips Panel ────────────────────────────────────────────── */
+        .tips-list {
+            padding: 0.5rem 0;
+        }
+
+        .tip-item {
+            padding: 0.875rem 1.5rem;
+            display: flex;
+            gap: 0.875rem;
+            align-items: flex-start;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            transition: background 0.2s ease;
+        }
+
+        .tip-item:last-child { border-bottom: none; }
+        .tip-item:hover { background: rgba(255,255,255,0.02); }
+
+        .tip-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .tip-icon.a { background: rgba(99,102,241,0.12); color: #818cf8; }
+        .tip-icon.b { background: rgba(16,185,129,0.12); color: #34d399; }
+        .tip-icon.c { background: rgba(245,158,11,0.12); color: #fbbf24; }
+        .tip-icon.d { background: rgba(139,92,246,0.12); color: #a78bfa; }
+
+        .tip-text {
+            font-size: 0.82rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .tip-text strong { color: #94a3b8; }
+
+        /* ── Counselling Timeline ─────────────────────────────────── */
+        .timeline {
+            margin-bottom: 2.5rem;
+            animation: fadeUp 0.6s ease 0.4s both;
+        }
+
+        .timeline-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .timeline-step {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 1.25rem;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-step:hover { transform: translateY(-3px); border-color: rgba(99,102,241,0.25); }
+
+        .step-num {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 800;
+            margin: 0 auto 0.875rem;
+        }
+
+        .step-num.s1 { background: rgba(99,102,241,0.2); color: #818cf8; }
+        .step-num.s2 { background: rgba(16,185,129,0.2); color: #34d399; }
+        .step-num.s3 { background: rgba(139,92,246,0.2); color: #a78bfa; }
+        .step-num.s4 { background: rgba(20,184,166,0.2); color: #2dd4bf; }
+
+        .step-title { font-size: 0.88rem; font-weight: 700; margin-bottom: 0.3rem; }
+        .step-desc  { font-size: 0.75rem; color: #475569; line-height: 1.5; }
+
+        /* ── Footer ──────────────────────────────────────────────── */
+        footer {
+            position: relative;
+            z-index: 1;
+            margin-top: 3rem;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        footer p { font-size: 0.78rem; color: #334155; }
+        footer a  { color: #6366f1; text-decoration: none; font-weight: 600; }
+        footer a:hover { text-decoration: underline; }
+
+        /* ── Responsive ───────────────────────────────────────────── */
+        @media (max-width: 900px) {
+            .action-cards { grid-template-columns: 1fr; }
+            .two-col { grid-template-columns: 1fr; }
+            .timeline-steps { grid-template-columns: repeat(2, 1fr); }
+            .hero-inner { flex-direction: column; text-align: center; }
+            .hero-badge-group { justify-content: center; }
+            .hero-visual { display: none; }
+        }
+
+        @media (max-width: 600px) {
+            main { padding: 1.5rem 1rem 3rem; }
+            nav { padding: 0 1rem; }
+            .timeline-steps { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-fixed"></div>
+<div class="bg-grid"></div>
+
+<!-- Nav -->
+<nav>
+    <div class="nav-left">
+        <div class="nav-logo-wrap">
+            <i class="ri-graduation-cap-fill" style="color:white;"></i>
+        </div>
+        <span class="nav-logo-text">TNLEA Assistant</span>
+    </div>
+    <div class="nav-right">
+        <a href="index.html" class="nav-app-btn">
+            <i class="ri-search-2-line"></i> Open App
+        </a>
+        <div class="user-pill" id="user-pill" style="display:none;">
+            <div class="user-avatar" id="user-avatar-nav">U</div>
+            <span class="user-name" id="user-name-nav">User</span>
+            <button class="btn-icon-nav" id="logout-btn" title="Sign out">
+                <i class="ri-logout-box-r-line"></i>
+            </button>
+        </div>
+        <div class="user-pill" id="guest-pill" style="display:none;">
+            <div class="user-avatar" style="background:linear-gradient(135deg,#475569,#334155);">
+                <i class="ri-user-line" style="font-size:0.75rem;color:#94a3b8;"></i>
+            </div>
+            <span class="user-name">Guest</span>
+            <a href="login.html" class="btn-icon-nav" title="Sign in">
+                <i class="ri-login-box-line"></i>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<main>
+
+    <!-- ── Hero ── -->
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-text">
+                <div class="greeting">
+                    <i class="ri-sun-line"></i>
+                    <span id="time-greeting">Good day</span>
+                </div>
+                <h1>Welcome back, <span id="hero-name">Student</span>!</h1>
+                <p id="hero-sub">You're on your way to finding the best engineering college. Let's keep building your list.</p>
+
+                <div class="hero-badge-group">
+                    <span class="hero-stat-badge hsb-choices">
+                        <i class="ri-list-check-2"></i>
+                        <span id="badge-choices">0 choices</span>
+                    </span>
+                    <span class="hero-stat-badge hsb-compare">
+                        <i class="ri-bar-chart-grouped-line"></i>
+                        <span id="badge-compare">0 in compare</span>
+                    </span>
+                    <span class="hero-stat-badge hsb-date">
+                        <i class="ri-calendar-line"></i>
+                        <span id="badge-date">—</span>
+                    </span>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-icon-big">🎓</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Action Cards ── -->
+    <div class="section-heading"><i class="ri-apps-line"></i> Quick Actions</div>
+    <div class="action-cards">
+
+        <a href="index.html#browse" class="action-card card-browse" onclick="goToSection('browse')">
+            <div class="ac-icon indigo"><i class="ri-search-2-line"></i></div>
+            <div class="ac-content">
+                <div class="ac-title">Browse Colleges</div>
+                <div class="ac-desc">Search and filter 3,300+ college-branch entries</div>
+                <div class="ac-count indigo">3,345 entries</div>
+            </div>
+            <i class="ri-arrow-right-line ac-arrow"></i>
+        </a>
+
+        <a href="index.html" class="action-card card-choices" onclick="goToSection('choices')">
+            <div class="ac-icon purple"><i class="ri-list-check-2"></i></div>
+            <div class="ac-content">
+                <div class="ac-title">My Choices</div>
+                <div class="ac-desc">Your priority list — drag to reorder</div>
+                <div class="ac-count purple" id="choices-count-card">0 choices</div>
+            </div>
+            <i class="ri-arrow-right-line ac-arrow"></i>
+        </a>
+
+        <a href="index.html" class="action-card card-compare" onclick="goToSection('compare')">
+            <div class="ac-icon teal"><i class="ri-bar-chart-grouped-line"></i></div>
+            <div class="ac-content">
+                <div class="ac-title">Compare Colleges</div>
+                <div class="ac-desc">Side-by-side comparison of up to 3 colleges</div>
+                <div class="ac-count teal" id="compare-count-card">0 in list</div>
+            </div>
+            <i class="ri-arrow-right-line ac-arrow"></i>
+        </a>
+
+        <a href="index.html" class="action-card card-public" onclick="goToSection('public')">
+            <div class="ac-icon green"><i class="ri-global-line"></i></div>
+            <div class="ac-content">
+                <div class="ac-title">Public List</div>
+                <div class="ac-desc">Colleges shared by you and your friends</div>
+                <div class="ac-count green">Real-time sync</div>
+            </div>
+            <i class="ri-arrow-right-line ac-arrow"></i>
+        </a>
+
+    </div>
+
+    <!-- ── Two Column: Recent Choices + Tips ── -->
+    <div class="section-heading"><i class="ri-layout-2-line"></i> My Progress</div>
+    <div class="two-col">
+
+        <!-- Recent Choices -->
+        <div class="panel">
+            <div class="panel-header">
+                <h3><i class="ri-history-line"></i> Recent Choices</h3>
+                <a href="index.html" onclick="goToSection('choices')" class="panel-link">
+                    View all <i class="ri-arrow-right-s-line"></i>
+                </a>
+            </div>
+            <div id="recent-choices-body">
+                <div class="empty-panel">
+                    <i class="ri-inbox-archive-line"></i>
+                    <p>No choices added yet. Start browsing colleges!</p>
+                    <a href="index.html" class="start-btn">
+                        <i class="ri-add-line"></i> Add First Choice
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Counselling Tips -->
+        <div class="panel">
+            <div class="panel-header">
+                <h3><i class="ri-lightbulb-line"></i> Counselling Tips</h3>
+            </div>
+            <div class="tips-list">
+                <div class="tip-item">
+                    <div class="tip-icon a"><i class="ri-award-line"></i></div>
+                    <div class="tip-text"><strong>Enter your diploma percentage</strong> in the sidebar to instantly see which colleges you're likely eligible for.</div>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-icon b"><i class="ri-list-check-2"></i></div>
+                    <div class="tip-text"><strong>Add at least 20 choices.</strong> The TNEA system allots based on priority order, so more choices = safer.</div>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-icon c"><i class="ri-bar-chart-grouped-line"></i></div>
+                    <div class="tip-text"><strong>Compare before committing.</strong> Use the Compare tab to see seats, cutoffs and type side-by-side.</div>
+                </div>
+                <div class="tip-item">
+                    <div class="tip-icon d"><i class="ri-download-2-line"></i></div>
+                    <div class="tip-text"><strong>Export your list as CSV</strong> and cross-check with the official TNEA counselling portal before filling.</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ── Counselling Steps Timeline ── -->
+    <div class="section-heading"><i class="ri-route-line"></i> TNEA Lateral Entry — Process Overview</div>
+    <div class="timeline">
+        <div class="timeline-steps">
+            <div class="timeline-step">
+                <div class="step-num s1">1</div>
+                <div class="step-title">Check Eligibility</div>
+                <div class="step-desc">Diploma holders with 60%+ aggregate eligible for lateral entry to 2nd year B.E./B.Tech</div>
+            </div>
+            <div class="timeline-step">
+                <div class="step-num s2">2</div>
+                <div class="step-title">Register on Portal</div>
+                <div class="step-desc">Register on the official TNEA lateral entry portal and upload required documents</div>
+            </div>
+            <div class="timeline-step">
+                <div class="step-num s3">3</div>
+                <div class="step-title">Fill Choice List</div>
+                <div class="step-desc">Use this app to research and build your optimal priority choice list</div>
+            </div>
+            <div class="timeline-step">
+                <div class="step-num s4">4</div>
+                <div class="step-title">Get Allotment</div>
+                <div class="step-desc">Seats are allotted based on merit rank and your choice order — report to the college</div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<footer>
+    <p>© 2025 <strong>TNLEA Assistant</strong> — Data is indicative. Verify from official <a href="https://www.annauniv.edu/" target="_blank" rel="noopener">Anna University</a> sources.</p>
+    <p><a href="login.html">Sign in</a> · <a href="landing.html">About</a> · <a href="index.html">Open App</a></p>
+</footer>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCqcnfGLPtQhVBFm7zhSiY0pUre_LSPxlY",
+        authDomain: "tnlea-a3ea2.firebaseapp.com",
+        projectId: "tnlea-a3ea2",
+        storageBucket: "tnlea-a3ea2.firebasestorage.app",
+        messagingSenderId: "185173026809",
+        appId: "1:185173026809:web:b5e2af654615885cdaff28"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // ── Auth check ───────────────────────────────────────────────────────────
+    const isGuest = localStorage.getItem('tnlea_guest') === 'true';
+
+    if (!isGuest) {
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                showUserPill(user.displayName || user.email, user.displayName || 'U');
+                setHeroName(user.displayName || 'Student');
+            } else {
+                // Not logged in and not guest → redirect to login
+                window.location.href = 'login.html';
+            }
+        });
+    } else {
+        // Guest mode
+        document.getElementById('guest-pill').style.display = 'flex';
+        setHeroName('Student');
+        document.getElementById('hero-sub').textContent = 'Sign in to sync your choices across devices. Guest choices are saved locally.';
+    }
+
+    function showUserPill(name, initial) {
+        document.getElementById('user-pill').style.display = 'flex';
+        document.getElementById('user-avatar-nav').textContent = initial.charAt(0).toUpperCase();
+        document.getElementById('user-name-nav').textContent = name;
+    }
+
+    function setHeroName(name) {
+        const firstName = name.split(' ')[0];
+        document.getElementById('hero-name').textContent = firstName;
+    }
+
+    // Logout
+    document.getElementById('logout-btn')?.addEventListener('click', () => {
+        auth.signOut().then(() => {
+            localStorage.removeItem('tnlea_guest');
+            window.location.href = 'login.html';
+        });
+    });
+
+    // ── Time greeting ────────────────────────────────────────────────────────
+    const hour = new Date().getHours();
+    const greetings = { morning: 'Good Morning', afternoon: 'Good Afternoon', evening: 'Good Evening', night: 'Good Night' };
+    const greeting  = hour < 12 ? greetings.morning : hour < 17 ? greetings.afternoon : hour < 21 ? greetings.evening : greetings.night;
+    document.getElementById('time-greeting').textContent = greeting;
+
+    // Date badge
+    const dateStr = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    document.getElementById('badge-date').textContent = dateStr;
+
+    // ── Load choices from localStorage ───────────────────────────────────────
+    let myChoices = [];
+    let compareList = [];
+
+    try { myChoices  = JSON.parse(localStorage.getItem('tnlea_choices'))  || []; } catch(e) { myChoices = []; }
+    try { compareList= JSON.parse(localStorage.getItem('tnlea_compare'))  || []; } catch(e) { compareList = []; }
+
+    // Update badges
+    document.getElementById('badge-choices').textContent = `${myChoices.length} choice${myChoices.length !== 1 ? 's' : ''}`;
+    document.getElementById('badge-compare').textContent = `${compareList.length} in compare`;
+    document.getElementById('choices-count-card').textContent = `${myChoices.length} choice${myChoices.length !== 1 ? 's' : ''}`;
+    document.getElementById('compare-count-card').textContent = `${compareList.length} in list`;
+
+    // ── Recent choices ────────────────────────────────────────────────────────
+    const recentBody = document.getElementById('recent-choices-body');
+
+    if (myChoices.length > 0) {
+        recentBody.innerHTML = '';
+        const recent = myChoices.slice(0, 5);
+        recent.forEach((c, i) => {
+            const badgeClass = c.type === 'Government' ? 'cb-govt'
+                             : c.type === 'Government Aided' ? 'cb-aided'
+                             : c.type === 'Deemed' ? 'cb-deemed' : 'cb-sf';
+            const badgeLabel = c.type === 'Government' ? 'Govt'
+                             : c.type === 'Government Aided' ? 'Aided'
+                             : c.type === 'Deemed' ? 'Deemed' : 'Pvt';
+
+            const div = document.createElement('div');
+            div.className = 'choice-item';
+            div.innerHTML = `
+                <div class="choice-num">${i + 1}</div>
+                <div class="choice-info">
+                    <div class="choice-name">${c.name || 'College'}</div>
+                    <div class="choice-branch">${c.branchCode || '—'} · ${c.branchName || '—'} · ${c.district || ''}</div>
+                </div>
+                <span class="choice-badge ${badgeClass}">${badgeLabel}</span>
+            `;
+            recentBody.appendChild(div);
+        });
+
+        if (myChoices.length > 5) {
+            const more = document.createElement('div');
+            more.style.cssText = 'padding:0.75rem 1.5rem;text-align:center;font-size:0.78rem;color:#475569;border-top:1px solid rgba(255,255,255,0.04);';
+            more.textContent = `+${myChoices.length - 5} more in My Choices`;
+            recentBody.appendChild(more);
+        }
+    }
+
+    // ── Navigate to section in app ────────────────────────────────────────────
+    function goToSection(section) {
+        sessionStorage.setItem('tnlea_nav_target', section);
+    }
+
+    // ── Action card click handlers ────────────────────────────────────────────
+    document.querySelectorAll('.action-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            const section = card.classList[1].replace('card-', '');
+            goToSection(section);
+        });
+    });
+</script>
+</body>
+</html>

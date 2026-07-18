@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNLEA Assistant — Smart Lateral Entry Counselling</title>
+    <meta name="description" content="The smartest tool for Tamil Nadu lateral entry engineering counselling. Browse 100+ colleges, filter by rank, compare side-by-side and build your perfect choice list.">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #6366f1;
+            --primary-2: #8b5cf6;
+            --secondary: #10b981;
+            --teal: #14b8a6;
+            --bg: #06080f;
+            --surface: rgba(255,255,255,0.04);
+            --border: rgba(255,255,255,0.08);
+            --text: #e8eeff;
+            --muted: #8892a4;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Animated Background ── */
+        .bg-gradient {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% 20%, rgba(99,102,241,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 80% 80%, rgba(139,92,246,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 50% 50%, rgba(16,185,129,0.06) 0%, transparent 70%),
+                #06080f;
+            pointer-events: none;
+        }
+
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+
+        /* ── Nav ── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 5%;
+            background: rgba(6, 8, 15, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .nav-logo-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 14px rgba(99,102,241,0.4);
+        }
+
+        .nav-logo-text {
+            font-size: 1.1rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a5b4fc, #c4b5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.5rem;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+        }
+        .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(99,102,241,0.5); }
+
+        /* ── Hero ── */
+        .hero {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 5% 5rem;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1.1rem;
+            background: rgba(99,102,241,0.12);
+            border: 1px solid rgba(99,102,241,0.3);
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #a5b4fc;
+            letter-spacing: 0.04em;
+            margin-bottom: 2rem;
+            animation: fadeUp 0.6s ease;
+        }
+
+        .hero-badge i { font-size: 0.9rem; color: #6366f1; }
+
+        .hero-title {
+            font-size: clamp(2.8rem, 7vw, 5.5rem);
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+            margin-bottom: 1.5rem;
+            animation: fadeUp 0.7s ease 0.1s both;
+        }
+
+        .hero-title .gradient-text {
+            background: linear-gradient(135deg, #a5b4fc 0%, #c4b5fd 40%, #6ee7b7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-desc {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: var(--muted);
+            max-width: 620px;
+            line-height: 1.7;
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+            animation: fadeUp 0.7s ease 0.2s both;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 5rem;
+            animation: fadeUp 0.7s ease 0.3s both;
+        }
+
+        .btn-hero-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.9rem 2.2rem;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 24px rgba(99,102,241,0.45);
+        }
+        .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(99,102,241,0.6); }
+
+        .btn-hero-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.9rem 2.2rem;
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.25s ease;
+        }
+        .btn-hero-outline:hover { background: var(--surface); border-color: rgba(255,255,255,0.15); }
+
+        /* ── Hero Preview Cards ── */
+        .hero-preview {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            animation: fadeUp 0.8s ease 0.4s both;
+        }
+
+        .preview-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            backdrop-filter: blur(20px);
+            text-align: left;
+        }
+
+        .preview-row {
+            display: grid;
+            grid-template-columns: 70px 1fr 1fr 100px 200px;
+            gap: 1rem;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+
+        .preview-row:last-child { border-bottom: none; }
+
+        .preview-row.header {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+        }
+
+        .preview-code {
+            font-family: 'JetBrains Mono', monospace;
+            color: #a5b4fc;
+            font-weight: 700;
+        }
+
+        .preview-badge {
+            display: inline-flex;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .pb-govt { background: rgba(16,185,129,0.15); color: #10b981; }
+        .pb-sf   { background: rgba(245,158,11,0.15);  color: #f59e0b; }
+        .pb-deemed { background: rgba(139,92,246,0.15); color: #8b5cf6; }
+
+        .preview-eligible { color: #10b981; font-weight: 700; font-size: 0.78rem; }
+        .preview-buttons { display: flex; gap: 0.5rem; }
+        .preview-btn {
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: none;
+            cursor: default;
+        }
+        .pb-add { background: rgba(99,102,241,0.2); color: #a5b4fc; }
+        .pb-cmp { background: rgba(20,184,166,0.2); color: #14b8a6; }
+
+        .glow-line {
+            position: absolute;
+            bottom: -1px;
+            left: 10%;
+            right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #6366f1, #8b5cf6, #10b981, transparent);
+            filter: blur(1px);
+        }
+
+        /* ── Features ── */
+        .features {
+            position: relative;
+            z-index: 1;
+            padding: 6rem 5%;
+        }
+
+        .section-label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #a5b4fc;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 800;
+            text-align: center;
+            letter-spacing: -0.03em;
+            margin-bottom: 1rem;
+        }
+
+        .section-sub {
+            text-align: center;
+            color: var(--muted);
+            font-size: 1rem;
+            max-width: 540px;
+            margin: 0 auto 3.5rem;
+            line-height: 1.7;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 60%, rgba(99,102,241,0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover::before { opacity: 1; }
+        .feature-card:hover { border-color: rgba(99,102,241,0.3); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(99,102,241,0.15); }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .fi-indigo { background: rgba(99,102,241,0.15); color: #6366f1; }
+        .fi-purple { background: rgba(139,92,246,0.15); color: #8b5cf6; }
+        .fi-green  { background: rgba(16,185,129,0.15); color: #10b981; }
+        .fi-teal   { background: rgba(20,184,166,0.15); color: #14b8a6; }
+        .fi-amber  { background: rgba(245,158,11,0.15); color: #f59e0b; }
+        .fi-red    { background: rgba(239,68,68,0.15);  color: #ef4444; }
+
+        .feature-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.6rem; }
+        .feature-card p  { font-size: 0.875rem; color: var(--muted); line-height: 1.65; }
+
+        /* ── Stats strip ── */
+        .stats-strip {
+            position: relative;
+            z-index: 1;
+            padding: 4rem 5%;
+            background: rgba(99,102,241,0.05);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stats-strip-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .strip-stat .number {
+            font-size: 2.8rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #a5b4fc, #c4b5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.03em;
+        }
+
+        .strip-stat .stat-label { font-size: 0.875rem; color: var(--muted); margin-top: 0.25rem; font-weight: 500; }
+
+        /* ── CTA ── */
+        .cta-section {
+            position: relative;
+            z-index: 1;
+            padding: 6rem 5%;
+            text-align: center;
+        }
+
+        .cta-box {
+            max-width: 700px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(139,92,246,0.08) 100%);
+            border: 1px solid rgba(99,102,241,0.25);
+            border-radius: 28px;
+            padding: 4rem 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #6366f1, #8b5cf6, transparent);
+        }
+
+        .cta-box h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 1rem; }
+        .cta-box p  { color: var(--muted); font-size: 1rem; max-width: 450px; margin: 0 auto 2.5rem; line-height: 1.7; }
+
+        /* ── Footer ── */
+        footer {
+            position: relative;
+            z-index: 1;
+            padding: 2rem 5%;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        footer p { font-size: 0.82rem; color: var(--muted); }
+        footer a  { color: #a5b4fc; text-decoration: none; font-weight: 600; }
+        footer a:hover { text-decoration: underline; }
+
+        /* ── Animations ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .preview-row { grid-template-columns: 60px 1fr 80px; }
+            .preview-row .col-branch, .preview-row .col-elig { display: none; }
+            .hero-actions { flex-direction: column; align-items: center; }
+            .cta-box { padding: 3rem 1.5rem; }
+            footer { justify-content: center; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-grid"></div>
+
+<!-- Nav -->
+<nav>
+    <a href="landing.html" class="nav-logo">
+        <div class="nav-logo-icon"><i class="ri-graduation-cap-fill" style="color:white;"></i></div>
+        <span class="nav-logo-text">TNLEA Assistant</span>
+    </a>
+    <a href="login.html" class="nav-cta">
+        <i class="ri-rocket-line"></i> Open App
+    </a>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="hero-badge">
+        <i class="ri-sparkling-line"></i>
+        Tamil Nadu Lateral Entry Counselling — 2025
+    </div>
+
+    <h1 class="hero-title">
+        Your Smarter Path to<br>
+        <span class="gradient-text">Engineering Admission</span>
+    </h1>
+
+    <p class="hero-desc">
+        Browse 100+ colleges, filter by rank, compare side-by-side, and build the perfect TNEA lateral entry choice list — all in one place.
+    </p>
+
+    <div class="hero-actions">
+        <a href="index.html" class="btn-hero-primary">
+            <i class="ri-rocket-line"></i> Start Building My List
+        </a>
+        <a href="#features" class="btn-hero-outline">
+            <i class="ri-information-line"></i> See Features
+        </a>
+    </div>
+
+    <!-- Preview of the app table -->
+    <div class="hero-preview">
+        <div class="preview-card">
+            <div class="preview-row header">
+                <span>Code</span>
+                <span>College</span>
+                <span class="col-branch">Branch</span>
+                <span class="col-elig">Cutoff</span>
+                <span>Actions</span>
+            </div>
+            <div class="preview-row">
+                <span class="preview-code">1</span>
+                <span>Anna University — CEG Campus</span>
+                <span class="col-branch" style="color:#8892a4;font-size:0.8rem;">CS · Computer Science</span>
+                <span class="preview-eligible col-elig">✓ 480</span>
+                <div class="preview-buttons"><span class="preview-btn pb-add"><i class="ri-add-line"></i> Mine</span><span class="preview-btn pb-cmp"><i class="ri-bar-chart-grouped-line"></i></span></div>
+            </div>
+            <div class="preview-row">
+                <span class="preview-code">2006</span>
+                <span>PSG College of Technology</span>
+                <span class="col-branch" style="color:#8892a4;font-size:0.8rem;">IT · Information Tech</span>
+                <span class="col-elig" style="color:#f59e0b;font-weight:700;font-size:0.78rem;">⚠ 3,500</span>
+                <div class="preview-buttons"><span class="preview-btn pb-add"><i class="ri-add-line"></i> Mine</span><span class="preview-btn pb-cmp"><i class="ri-bar-chart-grouped-line"></i></span></div>
+            </div>
+            <div class="preview-row">
+                <span class="preview-code">1419</span>
+                <span>SSN College of Engineering</span>
+                <span class="col-branch" style="color:#8892a4;font-size:0.8rem;">CS · Computer Science</span>
+                <span class="col-elig" style="color:#ef4444;font-weight:700;font-size:0.78rem;">✗ 4,800</span>
+                <div class="preview-buttons"><span class="preview-btn pb-add"><i class="ri-add-line"></i> Mine</span><span class="preview-btn pb-cmp"><i class="ri-bar-chart-grouped-line"></i></span></div>
+            </div>
+        </div>
+        <div class="glow-line"></div>
+    </div>
+</section>
+
+<!-- Stats Strip -->
+<div class="stats-strip">
+    <div class="stats-strip-grid">
+        <div class="strip-stat">
+            <div class="number">30+</div>
+            <div class="stat-label">Colleges Covered</div>
+        </div>
+        <div class="strip-stat">
+            <div class="number">110+</div>
+            <div class="stat-label">College-Branch Entries</div>
+        </div>
+        <div class="strip-stat">
+            <div class="number">11</div>
+            <div class="stat-label">Districts</div>
+        </div>
+        <div class="strip-stat">
+            <div class="number">4</div>
+            <div class="stat-label">College Types</div>
+        </div>
+    </div>
+</div>
+
+<!-- Features -->
+<section class="features" id="features">
+    <div class="section-label">What You Get</div>
+    <h2 class="section-title">Everything You Need for Counselling</h2>
+    <p class="section-sub">No more juggling PDFs and spreadsheets. TNLEA Assistant has all the tools in one clean interface.</p>
+
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon fi-indigo"><i class="ri-search-2-line"></i></div>
+            <h3>Smart Search & Filter</h3>
+            <p>Instantly search by college name, code, or branch. Filter by district, college type (Govt / Aided / Self-Financing / Deemed), or specific branch.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon fi-green"><i class="ri-award-line"></i></div>
+            <h3>Rank-Based Eligibility</h3>
+            <p>Enter your rank and every college gets color-coded instantly — green for likely eligible, amber for borderline, red for hard to get.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon fi-teal"><i class="ri-bar-chart-grouped-line"></i></div>
+            <h3>Side-by-Side Compare</h3>
+            <p>Add up to 3 college-branch combinations to compare seats, type, district, cutoff and eligibility all in one glance.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon fi-purple"><i class="ri-draggable"></i></div>
+            <h3>Drag-and-Drop Priority</h3>
+            <p>Build your My Choices list and reorder them by dragging — or use the arrow buttons. Your top priority goes to slot #1.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon fi-amber"><i class="ri-global-line"></i></div>
+            <h3>Shared Public List</h3>
+            <p>Sign in with Google and share college suggestions with friends in real time via a shared public list powered by Firebase.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon fi-red"><i class="ri-download-2-line"></i></div>
+            <h3>Export to CSV</h3>
+            <p>Download your full choice list as a CSV file with all details — college code, name, branch, seats, type, district, and cutoff.</p>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="cta-box">
+        <h2>Ready to Build Your List?</h2>
+        <p>TNLEA counselling can be stressful — but your choice list doesn't have to be. Start now, it's free.</p>
+        <a href="index.html" class="btn-hero-primary" style="font-size:1.05rem;padding:1rem 2.5rem;">
+            <i class="ri-rocket-line"></i> Open the App
+        </a>
+    </div>
+</section>
+
+<footer>
+    <p>© 2025 <strong>TNLEA Assistant</strong> — Built for diploma holders appearing in Tamil Nadu lateral entry counselling.</p>
+    <p>Data is indicative. Verify cutoffs from official <a href="https://www.annauniv.edu/" target="_blank" rel="noopener">Anna University</a> sources.</p>
+</footer>
+
+</body>
+</html>

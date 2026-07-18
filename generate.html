@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generating Full Database</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        #status { margin-top: 20px; font-size: 1.2rem; }
+        .spinner { border: 4px solid rgba(255,255,255,0.1); border-left-color: #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="spinner" id="spinner"></div>
+    <div id="status">Starting PDF Extraction...</div>
+
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+        async function extractData() {
+            const status = document.getElementById('status');
+            
+            try {
+                status.innerText = "Downloading PDF from server...";
+                const response = await fetch('/media.pdf');
+                const arrayBuffer = await response.arrayBuffer();
+
+                status.innerText = "Parsing PDF structure (this may take a minute)...";
+                const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+                
+                let colleges = [];
+                let currentCollegeCode = null;
+                let currentCollegeName = null;
+
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    status.innerText = `Extracting text from page ${i} of ${pdf.numPages}...`;
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    
+                    // Construct text
+                    const strings = content.items.map(item => item.str.trim()).filter(s => s.length > 0);
+                    
+                    // Logic to parse TNEA format
+                    for (let j = 0; j < strings.length; j++) {
+                        const str = strings[j];
+                        
+                        // Check if it's a college code (4 digits)
+                        if (/^\d{4}$/.test(str)) {
+                            // The next string is usually the college name
+                            if (j + 1 < strings.length && isNaN(strings[j+1])) {
+                                currentCollegeCode = str;
+                                currentCollegeName = strings[j+1];
+                                j++; // skip next since we consumed it
+                            }
+                        } 
+                        // Or if it's "1304 Easwari Engineering..." combined in one string
+                        else if (/^(\d{4})\s+(.+)$/.test(str)) {
+                            const match = str.match(/^(\d{4})\s+(.+)$/);
+                            currentCollegeCode = match[1];
+                            currentCollegeName = match[2];
+                        }
+                        // Check if it's a branch code (2 capital letters)
+                        else if (/^[A-Z]{2}$/.test(str)) {
+                            // The next string is branch name, followed by seats
+                            if (currentCollegeCode && j + 2 < strings.length) {
+                                const branchCode = str;
+                                const branchName = strings[j+1];
+                                const seats = strings[j+2];
+                                
+                                if (/^\d+$/.test(seats)) {
+                                    colleges.push({
+                                        code: currentCollegeCode,
+                                        name: currentCollegeName.replace(/"/g, '\\"'),
+                                        branchCode: branchCode,
+                                        branchName: branchName.replace(/"/g, '\\"'),
+                                        seats: parseInt(seats)
+                                    });
+                                    j += 2;
+                                }
+                            }
+                        }
+                        // Check if branch, name, and seats are combined: "CS COMPUTER SCIENCE 120"
+                        else if (/^([A-Z]{2})\s+(.+?)\s+(\d+)$/.test(str)) {
+                            if (currentCollegeCode) {
+                                const match = str.match(/^([A-Z]{2})\s+(.+?)\s+(\d+)$/);
+                                colleges.push({
+                                    code: currentCollegeCode,
+                                    name: currentCollegeName.replace(/"/g, '\\"'),
+                                    branchCode: match[1],
+                                    branchName: match[2].replace(/"/g, '\\"'),
+                                    seats: parseInt(match[3])
+                                });
+                            }
+                        }
+                    }
+                }
+
+                status.innerText = `Found ${colleges.length} branches! Saving to database...`;
+                
+                const jsContent = "const collegesData = [\n  " + 
+                    colleges.map(c => `{ code: "${c.code}", name: "${c.name}", branchCode: "${c.branchCode}", branchName: "${c.branchName}", seats: ${c.seats} }`).join(",\n  ") + 
+                    "\n];";
+
+                const saveResponse = await fetch('/save_data', {
+                    method: 'POST',
+                    body: jsContent
+                });
+
+                if (saveResponse.ok) {
+                    status.innerText = "Database completely updated! You can now close this tab and refresh the app.";
+                    status.style.color = "#4ade80";
+                    document.getElementById('spinner').style.display = 'none';
+                } else {
+                    throw new Error("Failed to save data.js");
+                }
+            } catch (err) {
+                console.error(err);
+                status.innerText = "Error: " + err.message;
+                status.style.color = "#f87171";
+                document.getElementById('spinner').style.display = 'none';
+            }
+        }
+
+        extractData();
+    </script>
+</body>
+</html>
