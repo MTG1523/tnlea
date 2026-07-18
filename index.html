@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNLEA Choice Filling Assistant — Tamil Nadu Lateral Entry</title>
+    <meta name="description" content="Smart TNEA lateral entry counselling tool to browse, filter, compare and build your college choice list.">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- ══════════════════ SIDEBAR ══════════════════ -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="home.html" class="logo" title="Go to dashboard">
+                <div class="logo-icon-wrap">
+                    <i class="ri-graduation-cap-fill"></i>
+                </div>
+                <div class="logo-text">
+                    <span class="logo-title">TNLEA</span>
+                    <span class="logo-subtitle">Lateral Entry Assistant</span>
+                </div>
+            </a>
+        </div>
+
+        <nav class="nav-menu">
+            <span class="nav-section-label">Explore</span>
+
+            <a href="#" class="nav-item active" data-target="browse" id="nav-browse">
+                <i class="ri-search-2-line"></i>
+                Browse Colleges
+            </a>
+
+            <a href="#" class="nav-item" data-target="public" id="nav-public">
+                <i class="ri-global-line"></i>
+                Public List
+                <span class="badge" id="public-count">0</span>
+            </a>
+
+            <span class="nav-section-label">My Work</span>
+
+            <a href="#" class="nav-item" data-target="choices" id="nav-choices">
+                <i class="ri-list-check-2"></i>
+                My Choices
+                <span class="badge" id="choices-count">0</span>
+            </a>
+
+            <a href="#" class="nav-item" data-target="compare" id="nav-compare">
+                <i class="ri-bar-chart-grouped-line"></i>
+                Compare
+                <span class="badge" id="compare-count" style="background: linear-gradient(135deg,#14b8a6,#0d9488);">0</span>
+            </a>
+
+            <span class="nav-section-label">Navigation</span>
+
+            <a href="home.html" class="nav-item">
+                <i class="ri-home-5-line"></i>
+                Dashboard
+            </a>
+
+            <a href="landing.html" class="nav-item">
+                <i class="ri-information-line"></i>
+                About
+            </a>
+        </nav>
+
+        <!-- Rank Input -->
+        <div class="rank-section">
+            <div class="rank-section-label">
+                <i class="ri-percent-line"></i>
+                Diploma %
+            </div>
+            <div class="rank-input-wrap">
+                <i class="ri-percent-line"></i>
+                <input type="number" id="rank-input" placeholder="e.g. 85.5" min="35" max="100" step="0.01">
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="btn-sidebar primary" id="export-btn">
+                <i class="ri-download-2-line"></i> Export My Choices
+            </button>
+            <button class="btn-sidebar" id="clear-choices-btn">
+                <i class="ri-delete-bin-line"></i> Clear All Choices
+            </button>
+        </div>
+    </aside>
+
+    <!-- ══════════════════ MAIN CONTENT ══════════════════ -->
+    <div class="main-content" id="main-content">
+
+        <!-- Top Header -->
+        <div class="top-header">
+            <div class="top-header-left">
+                <button class="btn-icon mobile-menu-btn" id="mobile-menu-btn" title="Open menu">
+                    <i class="ri-menu-line" style="font-size:1.25rem;"></i>
+                </button>
+                <span class="page-breadcrumb" id="page-breadcrumb">
+                    <strong>Browse Colleges</strong>
+                </span>
+            </div>
+            <div class="top-header-right">
+                <button class="theme-btn" id="theme-btn" title="Toggle theme">
+                    <i class="ri-moon-fill" id="theme-icon"></i>
+                </button>
+                <div class="auth-section">
+                    <button class="btn btn-outline btn-sm" id="login-btn">
+                        <i class="ri-google-fill"></i> Sign In
+                    </button>
+                    <div class="user-profile hidden" id="user-profile">
+                        <div class="avatar" id="user-avatar">U</div>
+                        <span id="user-name">User</span>
+                        <button class="btn-icon" id="logout-btn" title="Sign out">
+                            <i class="ri-logout-box-r-line"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Content Sections ── -->
+        <div class="content-inner">
+
+            <!-- ══ BROWSE SECTION ══ -->
+            <section id="browse-section" class="section active">
+                <div class="section-header">
+                    <div class="section-header-text">
+                        <h1>Browse Colleges &amp; Branches</h1>
+                        <p>Search, filter, and add branches to your choice list or compare them</p>
+                    </div>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-icon indigo"><i class="ri-building-4-line"></i></div>
+                        <div class="stat-info">
+                            <div class="label">Total Colleges</div>
+                            <div class="value" id="stat-colleges">—</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="ri-government-line"></i></div>
+                        <div class="stat-info">
+                            <div class="label">Government</div>
+                            <div class="value" id="stat-govt">—</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon amber"><i class="ri-map-pin-2-line"></i></div>
+                        <div class="stat-info">
+                            <div class="label">Districts</div>
+                            <div class="value" id="stat-districts">—</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon teal"><i class="ri-node-tree"></i></div>
+                        <div class="stat-info">
+                            <div class="label">Total Entries</div>
+                            <div class="value" id="stat-entries">—</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Bar -->
+                <div class="filter-bar">
+                    <div class="filter-top-row">
+                        <div class="search-wrap">
+                            <i class="ri-search-2-line search-icon"></i>
+                            <input type="text" id="search-input" placeholder="Search college name, code, or branch…">
+                        </div>
+
+                        <select class="filter-select" id="filter-branch" title="Filter by branch">
+                            <option value="all">All Branches</option>
+                        </select>
+
+                        <select class="filter-select" id="filter-type" title="Filter by college type">
+                            <option value="all">All Types</option>
+                            <option value="Government">Government</option>
+                            <option value="Government Aided">Government Aided</option>
+                            <option value="Self-Financing">Self-Financing</option>
+                            <option value="Deemed">Deemed</option>
+                        </select>
+
+                        <select class="filter-select" id="filter-district" title="Filter by district">
+                            <option value="all">All Districts</option>
+                        </select>
+
+                        <div class="filter-divider"></div>
+
+                        <span class="results-info" id="results-info">
+                            Showing <strong id="results-count">—</strong> results
+                        </span>
+
+                        <button class="clear-filters-btn" id="clear-filters-btn">
+                            <i class="ri-close-line"></i> Clear
+                        </button>
+                    </div>
+
+                    <div class="active-filters" id="active-filters"></div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-container">
+                    <table class="data-table" id="college-table">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>College</th>
+                                <th>Branch</th>
+                                <th>Type / District</th>
+                                <th>Cutoff</th>
+                                <th class="col-actions">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="college-table-body">
+                            <!-- populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ══ PUBLIC LIST SECTION ══ -->
+            <section id="public-section" class="section">
+                <div class="section-header">
+                    <div class="section-header-text">
+                        <h1>Public List</h1>
+                        <p>Colleges suggested by you and your friends — shared in real time</p>
+                    </div>
+                </div>
+
+                <div class="choices-container" id="public-list">
+                    <div class="empty-state" id="public-empty-state">
+                        <div class="empty-state-icon"><i class="ri-global-line"></i></div>
+                        <h3>Public list is empty</h3>
+                        <p>Be the first to suggest a college from the Browse tab!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══ MY CHOICES SECTION ══ -->
+            <section id="choices-section" class="section">
+                <div class="section-header">
+                    <div class="section-header-text">
+                        <h1>My Choice List</h1>
+                        <p>Drag cards to reorder — your top choice should be #1</p>
+                    </div>
+                </div>
+
+                <div class="choices-container" id="choices-list">
+                    <div class="empty-state" id="empty-state">
+                        <div class="empty-state-icon"><i class="ri-inbox-archive-line"></i></div>
+                        <h3>Your choice list is empty</h3>
+                        <p>Go to Browse Colleges and click <strong>Mine</strong> to add your preferred branches.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ══ COMPARE SECTION ══ -->
+            <section id="compare-section" class="section">
+                <div class="section-header">
+                    <div class="section-header-text">
+                        <h1>Compare Colleges</h1>
+                        <p>Add up to 3 colleges to compare side-by-side</p>
+                    </div>
+                    <button class="btn btn-danger-soft btn-sm" id="clear-compare-btn" style="display:none;">
+                        <i class="ri-delete-bin-line"></i> Clear All
+                    </button>
+                </div>
+
+                <div class="compare-hint-bar" id="compare-hint-bar">
+                    <i class="ri-information-line"></i>
+                    <span>Click <strong>Compare</strong> on any college row to add it here. You can add up to 3.</span>
+                    <div class="compare-slots" id="compare-slots">
+                        <div class="compare-slot" id="slot-0"></div>
+                        <div class="compare-slot" id="slot-1"></div>
+                        <div class="compare-slot" id="slot-2"></div>
+                    </div>
+                </div>
+
+                <div class="compare-container" id="compare-container">
+                    <div class="compare-empty" id="compare-empty-state">
+                        <i class="ri-bar-chart-grouped-line"></i>
+                        <h3>No colleges to compare yet</h3>
+                        <p>Go to Browse and click the <strong>Compare</strong> button on any row.</p>
+                    </div>
+                </div>
+            </section>
+
+        </div><!-- /content-inner -->
+    </div><!-- /main-content -->
+</div><!-- /app-container -->
+
+<!-- Sidebar Overlay (mobile) -->
+<div class="sidebar-overlay hidden" id="sidebar-overlay"></div>
+
+<!-- Toast -->
+<div id="toast" class="toast">
+    <i class="ri-checkbox-circle-line"></i>
+    <span id="toast-message">Done</span>
+</div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
